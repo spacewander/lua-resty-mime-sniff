@@ -89,7 +89,10 @@ local function ExactSignature(sig, ct)
     return { match = exact_match, sig = sig, ct = ct}
 end
 
-local function regex_match(self, data)
+local function regex_match(self, data, first_non_ws)
+    if self.skip_ws then
+        data = string_sub(data, first_non_ws)
+    end
     local offset = self.offset
     if #data <= offset then
         return ""
@@ -106,6 +109,7 @@ local function RegexSignature(opts)
         match = regex_match,
         offset = opts.offset or 0,
         regex = opts.regex,
+        skip_ws = opts.skip_ws,
         ct = opts.ct
     }
 end
@@ -190,6 +194,11 @@ local sniff_signatures = {
     HtmlSignature("<P"),
     HtmlSignature("<!--"),
 
+    RegexSignature{
+        regex = [[(?:<\?xml\s+.*\?>\s*)?(?:<!DOCTYPE\s+svg|<svg) ]],
+        skip_ws = true,
+        ct = "image/svg+xml",
+    },
     MaskedSignature{
         mask = "\xFF\xFF\xFF\xFF\xFF",
         pat = "<?xml", skip_ws = true,
@@ -322,7 +331,8 @@ end
 -- match_content_type checks if the given data's Content-Type matches any of the given types.
 -- The types is an array-like table or string, and the length of data should be long enough.
 -- (1445 bytes at most and 512 bytes is enough)
--- It will return matched type or nil,
+-- Note that the order of types is important. The first type matches first.
+-- This function will return matched type or nil,
 -- or throw an error if none of the given types is supported yet.
 -- For the list of support mime types, please refer to the wiki:
 -- https://github.com/spacewander/lua-resty-mime-sniff/wiki/MIME-type-support-status

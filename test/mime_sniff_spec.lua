@@ -52,6 +52,10 @@ local case_groups = {
         old_gnu_format_tar,
         standard_tar,
     },
+    ["image/svg+xml"] = {
+        [[  <!DOCTYPE svg ]],
+        "<svg ",
+    },
     ["image/jpeg"] = {
         "\xff\xd8\xff\xe1\x57\xae\x45\x78\x69\x66\x00\x00\x4d\x4d\x00\x2a",
     },
@@ -106,6 +110,12 @@ it('Detect Content-Type', function()
                 "While detecting with " .. case)
         end
     end
+
+    -- Addition check for image/svg+xml and text/xml
+    local svg = [[
+        <?xml version="1.0" standalone="no"?>
+        <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"]]
+    assert.are.same("image/svg+xml", mime_sniff.detect_content_type(svg))
 end)
 
 describe('Match Content-Type', function()
