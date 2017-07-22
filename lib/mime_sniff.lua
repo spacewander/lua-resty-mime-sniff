@@ -296,6 +296,7 @@ for _, signature in ipairs(sniff_signatures) do
         ct_sig_map[signature.ct] = {signature}
     end
 end
+ct_sig_map['video/avi'] = ct_sig_map['video/x-msvideo']
 
 local function truncate_sniff_data(data)
     if #data > MAX_SNIFF_LEN then
@@ -361,9 +362,8 @@ function _M.match_content_type(data, types, ...)
         type_supported = true
         for j = 1, #signatures do
             local signature = signatures[j]
-            local ct = signature:match(data, first_non_ws)
-            if ct ~= "" then
-                return ct
+            if signature:match(data, first_non_ws) ~= "" then
+                return given_type
             end
         end
 
@@ -375,9 +375,8 @@ function _M.match_content_type(data, types, ...)
         local signatures = ct_sig_map["text/plain"]
         for i = 1, #signatures do
             local signature = signatures[i]
-            local ct = signature:match(data, first_non_ws)
-            if ct ~= "" then
-                return ct
+            if signature:match(data, first_non_ws) ~= "" then
+                return "text/plain"
             end
         end
     end

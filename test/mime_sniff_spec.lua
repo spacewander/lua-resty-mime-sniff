@@ -140,6 +140,12 @@ describe('Match Content-Type', function()
         end
     end)
 
+    it('alias video/x-msvideo to video/avi for match_content_type', function()
+        local avi = "RIFF,O\n\x00AVI LISTÀ"
+        assert.are.same("video/avi", mime_sniff.match_content_type(avi, "video/avi"))
+        assert.are.same("video/x-msvideo", mime_sniff.match_content_type(avi, "video/x-msvideo"))
+    end)
+
     it('content-type not found', function()
         for expect_ct, cases in pairs(case_groups) do
             for _, case in ipairs(cases) do
