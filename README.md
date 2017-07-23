@@ -76,7 +76,8 @@ https://github.com/spacewander/lua-resty-mime-sniff/wiki/MIME-type-support-statu
 
 ## Installation
 
-You could vendor the `lib/` in your project.
+You could install via `opm --cwd get spacewander/lua-resty-mime-sniff`.(Recommended)
+Or you could vendor the `lib/` in your project.
 
 ## Contributing
 
