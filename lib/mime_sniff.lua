@@ -330,12 +330,12 @@ function _M.detect_content_type(data)
 end
 
 -- match_content_type checks if the given data's Content-Type matches any of the given types.
--- The types is an array-like table or string, and the length of data should be long enough.
+-- The types is an array-like table or strings, and the length of data should be long enough.
 -- (1445 bytes at most and 512 bytes is enough)
 -- Note that the order of types is important. The first type matches first.
 -- This function will return matched type or nil,
 -- or throw an error if none of the given types is supported yet.
--- For the list of support mime types, please refer to the wiki:
+-- For the list of supported mime types, please refer to the wiki:
 -- https://github.com/spacewander/lua-resty-mime-sniff/wiki/MIME-type-support-status
 function _M.match_content_type(data, types, ...)
     if type(types) == "string" then
