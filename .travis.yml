@@ -1,0 +1,36 @@
+sudo: required
+dist: trusty
+
+os: linux
+
+language: c
+
+install:
+  - wget -qO - https://openresty.org/package/pubkey.gpg | sudo apt-key add -
+  - sudo apt-get -y install software-properties-common
+  - sudo add-apt-repository -y "deb http://openresty.org/package/ubuntu $(lsb_release -sc) main"
+  - sudo apt-get update
+  - sudo apt-get install -y --no-install-recommends openresty openresty-resty
+  - cd ..
+  # Install luarocks with luajit, so that we could correctly calculate the coverage
+  - curl http://luarocks.github.io/luarocks/releases/luarocks-2.4.2.tar.gz > luarocks.tar.gz
+  - tar -xzvf luarocks.tar.gz
+  - cd luarocks-2.4.2
+  - ./configure --with-lua=/usr/local/openresty/luajit/ \
+      --lua-suffix=jit \
+      --with-lua-include=/usr/local/openresty/luajit/include/luajit-2.1
+  - make && sudo make install
+  - sudo ln -sf /usr/local/openresty/luajit/bin/luajit /usr/local/bin/lua
+  - cd ../lua-resty-mime-sniff
+  - sudo luarocks install luacheck
+  - sudo luarocks install busted
+  - sudo luarocks install cluacov
+  - sudo luarocks install luacov-coveralls
+  - luacheck -q .
+
+script:
+  - openresty -V
+  - resty -I ./lib test/busted_runner.lua --verbose --coverage test/mime_sniff_spec.lua
+
+after_success:
+  - luacov-coveralls -i lib -v

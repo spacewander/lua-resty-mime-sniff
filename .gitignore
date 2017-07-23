@@ -1,3 +1,4 @@
 luacov.report.out
 luacov.report.out.index
 luacov.stats.out
+.luacheckcache

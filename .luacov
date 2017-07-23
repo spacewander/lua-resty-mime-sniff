@@ -1,0 +1,5 @@
+tick = true
+exclude = {
+    "test/",
+    "mime_sniff_example.lua",
+}
