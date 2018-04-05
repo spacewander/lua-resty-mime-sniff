@@ -1,4 +1,7 @@
 require "table.new"
+local error = error
+local ipairs = ipairs
+local type = type
 local bit = require "bit"
 local bit_band  = bit.band
 local bit_lshift = bit.lshift
@@ -6,6 +9,7 @@ local re_find = ngx.re.find
 local string_byte = string.byte
 local string_sub = string.sub
 local table_new = table.new
+local table_insert = table.insert
 
 local MAX_SNIFF_LEN = 1445
 
@@ -291,7 +295,7 @@ local sniff_signatures = {
 local ct_sig_map = table_new(0, #sniff_signatures)
 for _, signature in ipairs(sniff_signatures) do
     if ct_sig_map[signature.ct] then
-        table.insert(ct_sig_map[signature.ct], signature)
+        table_insert(ct_sig_map[signature.ct], signature)
     else
         ct_sig_map[signature.ct] = {signature}
     end
@@ -329,6 +333,7 @@ function _M.detect_content_type(data)
     end
 end
 
+
 -- match_content_type checks if the given data's Content-Type matches any of the given types.
 -- The types is an array-like table or strings, and the length of data should be long enough.
 -- (1445 bytes at most and 512 bytes is enough)
@@ -341,6 +346,7 @@ function _M.match_content_type(data, types, ...)
     if type(types) == "string" then
         types = {types, ...}
     end
+
     local first_non_ws = find_first_non_ws(data)
     local type_supported = false
     local need_match_plain_text = false
